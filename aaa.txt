@@ -1,0 +1,30 @@
+# get-contry-id.ts
+import {TypeSupabaseClient} from "@/utils/supabase"
+
+export const getCountryById = (client: TypeSupabaseClient, countryId: number) => {
+    return client.from("countries").select(`id, name`).eq("id", countryId).throwOnError().single()
+}
+
+
+--------------------
+
+# use-country-query.ts
+import useSupabase from "./useSupabase"
+import useSupabase from "./useSupabase"
+import { useQuery } from "@tanstack/react-query"
+
+export const useCountryQuery = (countryId: number) => {
+    const client = useSupabase()
+    const queryKey = ["country", countryId]
+
+    const queryFn = async () => {
+        return getCountryById(client, countryId).then((result) => result.data)
+    }
+
+    return useQuery({queryKey, queryFn})
+}
+
+
+--------------------
+# page.tsx
+const {data, isLoading, isError} = useCountryQuery(countryId)
